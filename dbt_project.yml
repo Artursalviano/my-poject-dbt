@@ -28,6 +28,10 @@ flags:
   use_managed_iceberg: true
   use_concurrent_microbatch: true
   use_materialization_v2: true
+
+dbt-cloud:
+  project-id: 70471823573818
+  defer-env-id: "123456"
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
 
