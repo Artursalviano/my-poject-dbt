@@ -45,8 +45,12 @@ Macro de geração de `schema`
 	- Normaliza o nome (minúsculas, caracteres válidos) e retorna o nome do `schema` resultante.
 	- Pode prefixar ou sufixar com o ambiente (ex.: `dev_`, `prd_`) conforme configuração da macro.
 - Exemplos:
-	- `models/marts/dim_customers.sql` → schema gerado: `marts`
-	- `models/staging/jaffle_shop/stg_customers.sql` → schema gerado: `staging_jaffle_shop` (ou formato equivalente definido pela macro)
+	- `models/marts/dim_customers.sql` 
+        - schema gerado: `marts`
+        - dataset gerado: `analytics.marts.dim_customers` 
+	- `models/staging/jaffle_shop/stg_customers.sql` 
+        - schema gerado: `staging` 
+        - dataset gerado `analytics.staging.stg_customers`
 - Onde está aplicada:
 	- A macro é usada globalmente pelo dbt ao gerar o `schema` para cada modelo, sem necessidade de configurar `schema` model-a-modelo.
 
@@ -57,4 +61,4 @@ Integrações e fluxo de código
 - VS Code: ambiente de desenvolvimento local — edite modelos e macros, use a extensão do dbt e controle de versão Git local; mudanças são commitadas e pushadas para o repositório que aciona os Jobs/CI.
 - Credenciais e segredos: mantenha fora do repositório; use o secrets manager do Databricks, variáveis do Job ou o gerenciador de segredos do seu CI/CD.
 
-Se precisar, posso adicionar um trecho de exemplo da macro `generate_schema_name` ou um template de integração com o Databricks Job (ex.: bloco de comando que o Job executa).
+
