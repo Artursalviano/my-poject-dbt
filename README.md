@@ -54,6 +54,57 @@ Macro de geração de `schema`
 - Onde está aplicada:
 	- A macro é usada globalmente pelo dbt ao gerar o `schema` para cada modelo, sem necessidade de configurar `schema` model-a-modelo.
 
+Código da macro `generate_schema_name`
+
+```jinja2
+{% macro generate_schema_name(custom_schema_name, node) -%}
+
+    {%- set default_schema = target.schema -%}
+    
+    {# 
+       A lógica abaixo verifica se o modelo está dentro de uma subpasta em 'models'.
+       node.fqn é uma lista: [projeto, pasta, subpasta, modelo]
+       O fqn[1] geralmente é a primeira pasta logo após a pasta 'models'
+    #}
+
+    {%- if node.fqn | length > 2 -%}
+        
+        {# Pega o nome da pasta (ex: marts ou staging) #}
+        {{ node.fqn[1] | trim }}
+
+    {%- else -%}
+
+        {{ default_schema }}
+
+    {%- endif -%}
+
+{%- endmacro %}
+```
+
+**Explicação linha por linha:**
+
+1. **`{% macro generate_schema_name(custom_schema_name, node) -%}`**
+   - Define a macro que será chamada automaticamente pelo dbt para cada modelo
+   - Recebe dois parâmetros: `custom_schema_name` (configuração opcional do modelo) e `node` (metadados do modelo)
+
+2. **`{%- set default_schema = target.schema -%}`**
+   - Captura o schema padrão configurado no `profiles.yml` via `target.schema`
+   - Será usado como fallback se a lógica não encontrar uma pasta específica
+
+3. **`node.fqn | length > 2`**
+   - `fqn` (Fully Qualified Name) é uma lista de nomes do caminho do modelo
+   - Exemplo: `['analytics_engineering_dbt', 'marts', 'dim_customers']`
+   - Verifica se tem mais de 2 elementos (projeto + pelo menos 1 pasta + modelo)
+
+4. **`{{ node.fqn[1] | trim }}`**
+   - Extrai a primeira pasta do caminho (índice 1 da lista)
+   - Exemplo: de `['analytics_engineering_dbt', 'marts', 'dim_customers']` pega `marts`
+   - `| trim` remove espaços em branco antes e depois
+
+5. **`{{ default_schema }}`**
+   - Se não houver pasta específica, retorna o schema padrão do `profiles.yml`
+   - Serve como fallback para modelos na raiz de `models/`
+
 Integrações e fluxo de código
 - Repositório Git: código fonte e alterações são versionados em Git; os branches acionam pipelines/Jobs conforme convenção do time.
 - Databricks: os Jobs do Databricks estão configurados para puxar o código do Git (ou integrar via CI) e executar os comandos dbt no cluster.
