@@ -21,7 +21,7 @@ macros:
     docs:
       show: true
 
-  - name: cents_to_dollar
+  - name: cents_to_dollars
     description: |
       Converte um valor em centavos para dólares (divide por 100).
       
