@@ -1,0 +1,40 @@
+version: 2
+
+macros:
+  - name: generate_schema_name
+    description: |
+      Gera automaticamente o nome do schema baseado na estrutura de pastas dos modelos.
+      
+      Exemplos:
+      - `models/marts/dim_customers.sql` → schema: `marts` → dataset: `analytics.marts.dim_customers`
+      - `models/staging/jaffle_shop/stg_customers.sql` → schema: `staging` → dataset: `analytics.staging.stg_customers`
+    
+    arguments:
+      - name: custom_schema_name
+        description: Nome customizado do schema (parâmetro padrão do dbt, geralmente não usado)
+        type: string
+      
+      - name: node
+        description: Objeto de metadados do modelo contendo informações como `fqn` (Fully Qualified Name)
+        type: any
+    
+    docs:
+      show: true
+
+  - name: cents_to_dollar
+    description: |
+      Converte um valor em centavos para dólares (divide por 100).
+      
+      Útil para normalizar valores monetários armazenados em centavos (inteiros) para formato decimal de dólares.
+    
+    arguments:
+      - name: column_name
+        description: Nome da coluna (ou expressão) contendo o valor em centavos
+        type: string
+      
+      - name: decimals
+        description: Número de casas decimais no resultado (padrão 2)
+        type: int
+    
+    docs:
+      show: true
