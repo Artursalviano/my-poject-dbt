@@ -32,6 +32,17 @@ Boas práticas
 - Não versionar `profiles.yml` nem credenciais — use o secrets management do Databricks ou variáveis do Job.
 - Testes e validações devem ser executados tanto localmente quanto via Job para garantir consistência.
 
+Uso de Jinja para valores dinâmicos de `payment_method`
+- Quando você precisa pivotar ou gerar colunas a partir de valores que podem crescer ao longo do tempo (por exemplo, formas de pagamento), é melhor extrair esses valores em tempo de compilação do dbt.
+- Em vez de codificar a lista manualmente no template Jinja, use `run_query(...)` ou `dbt_utils.get_column_values(...)` para obter os valores distintos de `payment_method` antes de gerar o SQL final.
+- O fluxo é:
+  1. Executar uma query de compilação que retorna `select distinct payment_method from {{ ref('stg_stripe__payment') }} where payment_status = 'success'`.
+  2. Armazenar o resultado em uma lista Python/Jinja.
+  3. Iterar sobre essa lista para montar dinamicamente os `sum(case when payment_method = ... end)`.
+- Isso garante que, se surgir uma nova forma de pagamento no modelo `stg_stripe__payment`, o modelo pivotado se atualiza automaticamente ao compilar/rodar o dbt.
+
+Observação: o arquivo [models/int_orders__pivoted.sql](models/int_orders__pivoted.sql) é apenas um exemplo de uso e serve para ilustrar a técnica de pivotamento dinâmica descrita acima.
+
 Recursos
 - Documentação dbt: https://docs.getdbt.com/docs/introduction
 
