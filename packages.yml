@@ -7,5 +7,7 @@ packages:
 
   - package: brooklyn-data/dbt_artifacts
     version: 2.10.1
-
+    
+  - package: gitlabhq/snowflake_spend
+    version: 1.4.0
   # - local: sub_projects
